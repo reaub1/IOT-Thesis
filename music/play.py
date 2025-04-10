@@ -1,49 +1,36 @@
 from machine import Pin, PWM
 from utime import sleep
 
-from music.melodies import *  # import melodies.py
-from music.notes import *  # import notes.py
+from music.melodies import *
+from music.notes import *
 
-buzzer = PWM(Pin(14), freq=30000)  # pin where buzzer is connected
-
-volume = 0  # set volume to a value between 0 and 1000
-
-
-# functions to play the melodies
+buzzer = PWM(Pin(14), freq=30000)
+volume = 0
 
 def playtone(frequency):
-    buzzer.duty_u16(volume) # maximal volume at duty cycle equal to 32768
+    buzzer.duty_u16(volume)
     buzzer.freq(frequency)
 
 
 def be_quiet():
-    buzzer.duty_u16(0)  # turns sound off
-
+    buzzer.duty_u16(0)
 
 def duration(tempo, t):
-    # calculate the duration of a whole note in milliseconds (60s/tempo)*4 beats
     wholenote = (60000 / tempo) * 4
-
-    # calculate the duration of the current note
-    # (we need an integer without decimals, hence the // instead of /)
+    
     if t > 0:
         noteDuration = wholenote // t
     elif (t < 0):
-        # dotted notes are represented with negative durations
         noteDuration = wholenote // abs(t)
-        noteDuration *= 1.5  # increase their duration by a half
-
+        noteDuration *= 1.5
     return noteDuration
 
 
 def playsong(mysong):
     try:
-
-        print(mysong[0])  # print title of the song to the shell
-        tempo = mysong[1]  # get the tempo for this song from the melodies list
-
-        # iterate over the notes of the melody.
-        # The array is twice the number of notes (notes + durations)
+        print(mysong[0])
+        tempo = mysong[1]
+        
         for thisNote in range(2, len(mysong), 2):
 
             noteduration = duration(tempo, int(mysong[thisNote + 1]))
@@ -53,11 +40,11 @@ def playsong(mysong):
             else:
                 playtone(notes[mysong[thisNote]])
 
-            sleep(noteduration * 0.9 / 1000)  # we only play the note for 90% of the duration...
+            sleep(noteduration * 0.9 / 1000)
             be_quiet()
-            sleep(noteduration * 0.1 / 1000)  # ... and leave 10% as a pause between notes
+            sleep(noteduration * 0.1 / 1000)
 
-    except:  # make sure the buzzer stops making noise when something goes wrong or when the script is stopped
+    except:
         be_quiet()
 
 def set_volume(new_volume):
