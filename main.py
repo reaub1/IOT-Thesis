@@ -2,10 +2,15 @@ from microdot import Microdot, Response
 import network
 import time
 from neopixel import NeoPixel
-from machine import Pin
+from machine import Pin,I2C
+import ssd1306
 
 import sys
 sys.path.append("/music")
+
+i2c = I2C(0, scl = Pin(22) , sda = Pin(21), freq = 400000)
+
+oled = ssd1306.SSD1306_I2C(128, 32, i2c)
 
 from music.play import *
 
@@ -156,21 +161,25 @@ def play(request):
     volume = int(request.form['volume'])
     set_volume(volume * 100)
 
-    # Définir la couleur en fonction de la chanson
     if song_id == 0:
-        turn_on_LEDS((255, 255, 0))  # Jaune pour Pacman
+        turn_on_LEDS((255, 255, 0))
+        display_oled("Pacman")
     elif song_id == 1:
-        turn_on_LEDS((0, 0, 255))    # Bleu pour Star Wars
+        turn_on_LEDS((0, 0, 255))
+        display_oled("Stars Wars")
     elif song_id == 2:
-        turn_on_LEDS((255, 0, 0))    # Rouge pour Darth Vader
-
+        turn_on_LEDS((255, 0, 0))
+        display_oled("Darth Vader")
+    
     playsong(melody[song_id])
 
-    # Rediriger vers la page d'accueil
     return Response(status_code=303, headers={'Location': '/'})
 
-def display_information(text):
-    pass
+def display_oled(text):
+    oled.fill(0)
+    oled.text(text,0,0)
+    oled.show()
+    
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=80)
