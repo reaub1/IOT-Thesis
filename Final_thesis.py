@@ -29,15 +29,48 @@ r = 0
 g = 0
 b = 0
 
-def turn_on_LEDS(color):
+import time
+
+import time
+
+def turn_on_LEDS(color, intensity=100, rotation_speed=0.1):
     global current
     r, g, b = color
+
+    max_r = int((r / 100) * intensity)
+    max_g = int((g / 100) * intensity)
+    max_b = int((b / 100) * intensity)
+
+    for brightness in range(0, intensity + 1, 5):
+        current_r = int((max_r / intensity) * brightness)
+        current_g = int((max_g / intensity) * brightness)
+        current_b = int((max_b / intensity) * brightness)
+
+        for i in range(12):
+            if i < current:
+                led_strip[i] = (current_r, current_g, current_b)
+            else:
+                led_strip[i] = (0, 0, 0)
+        led_strip.write()
+        time.sleep(0.05)
+    for _ in range(12):
+        first_led = led_strip[0]
+
+        for i in range(11):
+            led_strip[i] = led_strip[i + 1]
+
+        led_strip[11] = first_led
+
+        led_strip.write()
+        time.sleep(rotation_speed)
+
     for i in range(12):
         if i < current:
-            led_strip[i] = (r, g, b)
+            led_strip[i] = (max_r, max_g, max_b)
         else:
             led_strip[i] = (0, 0, 0)
     led_strip.write()
+
 
 app = Microdot()
 Response.default_content_type = 'text/html'
@@ -121,7 +154,7 @@ def index(request):
 def play(request):
     song_id = int(request.form['song'])
     volume = int(request.form['volume'])
-    set_volume(volume * 327)
+    set_volume(volume * 100)
 
     # Définir la couleur en fonction de la chanson
     if song_id == 0:
