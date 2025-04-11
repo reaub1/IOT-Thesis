@@ -59,6 +59,58 @@ def index(request):
                 <button type="submit" name="song" value="2">Darth Vader theme</button>
             </form>
         </body>
+        <style>
+        body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f9;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+    h1 {
+        color: #333;
+        text-align: center;
+    }
+    form {
+        background: #fff;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        width: 300px;
+    }
+
+    label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: bold;
+    }
+
+    input[type="range"] {
+        width: 100%;
+        margin-bottom: 20px;
+    }
+
+    button {
+        width: 100%;
+        padding: 10px;
+        margin-top: 10px;
+        border: none;
+        border-radius: 4px;
+        background-color: #007BFF;
+        color: white;
+        font-size: 16px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+
+    button:hover {
+        background-color: #0056b3;
+    }
+        </style>
     </html>
     '''
 
@@ -66,8 +118,8 @@ def index(request):
 def play(request):
     song_id = int(request.form['song'])
     volume = int(request.form['volume'])
-    set_volume(volume * 327)  # Convertir le volume de 0-100 à 0-32768
-    playsong(melody[song_id])  # Jouer la mélodie correspondante
+    set_volume(volume * 327)
+    playsong(melody[song_id])
     return f'Playing song: {song_id} at volume: {volume}'
 
 if __name__ == "__main__":
